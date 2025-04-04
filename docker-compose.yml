@@ -36,12 +36,13 @@ services:
       redis:
         condition: service_healthy
     healthcheck:
-      test: [ "CMD-SHELL", "./healthchecks/vote.sh" ]
+      test: [ "CMD-SHELL", "/healthchecks/vote.sh" ]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 10s
-
+    volumes:
+      - healthchecks:/healthchecks
   worker:
     build:
       context: ./worker
@@ -57,19 +58,22 @@ services:
     networks:
       back-tier: {}
     healthcheck:
-      test: [ "CMD-SHELL", "./healthchecks/redis.sh" ]
+      test: [ "CMD-SHELL", "/healthchecks/redis.sh" ]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 10s
+    volumes:
+      - healthchecks:/healthchecks
   postgreSQL:
     image: postgres:15-alpine
     networks:
       back-tier: {}
     volumes:
       - db_data:/var/lib/postgresql/data
+      - healthchecks:/healthchecks
     healthcheck:
-      test: [ "CMD-SHELL", "./healthchecks/postgres.sh" ]
+      test: [ "CMD-SHELL", "/healthchecks/postgres.sh" ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -77,6 +81,7 @@ services:
 
 volumes:
   db_data:
+
 
 networks:
   front-tier:
