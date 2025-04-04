@@ -1,0 +1,83 @@
+version: "3.8"
+
+services:
+  nginx_lb:
+    build:
+      context: ./nginx
+    networks:
+      front-tier: {}
+    depends_on:
+      vote:
+        condition: service_healthy
+    ports:
+        - "80:80"
+  result:
+    build:
+      context: ./result
+    networks:
+      back-tier: {}
+      front-tier: {}
+    depends_on:
+      - postgreSQL
+  seed:
+    build:
+      context: ./seed-data
+    networks:
+      front-tier:
+    depends_on:
+      - nginx_lb
+  vote:
+    build:
+      context: ./vote
+    networks:
+      back-tier: {}
+      front-tier: {}
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD-SHELL", "./healthchecks/vote.sh" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  worker:
+    build:
+      context: ./worker
+    networks:
+      back-tier: {}
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgreSQL:
+        condition: service_healthy
+  redis:
+    image: redis:alpine
+    networks:
+      back-tier: {}
+    healthcheck:
+      test: [ "CMD-SHELL", "./healthchecks/redis.sh" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+  postgreSQL:
+    image: postgres:15-alpine
+    networks:
+      back-tier: {}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "./healthchecks/postgres.sh" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  db_data:
+
+networks:
+  front-tier:
+  back-tier:
