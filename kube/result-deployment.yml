@@ -5,11 +5,25 @@ metadata:
   labels:
     app: result
 spec:
-  containers:
-    - image: result:latest
-      name: result
-      ports:
-        - containerPort: 4000
-      env:
-        - name: PORT
-          value: "4000"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: result
+  template:
+    metadata:
+      labels:
+        app: result
+    spec:
+      containers:
+        - image: result:latest
+          name: result
+          env:
+            - name: PORT
+              value: "4000"
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
