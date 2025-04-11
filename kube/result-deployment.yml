@@ -8,8 +8,6 @@ spec:
   containers:
     - image: result:latest
       name: result
-      ports:
-        - containerPort: 4000
       env:
         - name: PORT
           value: "4000"
