@@ -3,7 +3,7 @@ version: "3.8"
 services:
   nginx_lb:
     build:
-      context: ./nginx
+      context: nginx
     networks:
       front-tier: {}
     depends_on:
@@ -13,7 +13,7 @@ services:
         - "80:80"
   result:
     build:
-      context: ./result
+      context: result
     networks:
       back-tier: {}
       front-tier: {}
@@ -21,14 +21,14 @@ services:
       - postgreSQL
   seed:
     build:
-      context: ./seed-data
+      context: seed-data
     networks:
       front-tier:
     depends_on:
       - nginx_lb
   vote:
     build:
-      context: ./vote
+      context: vote
     networks:
       back-tier: {}
       front-tier: {}
@@ -45,7 +45,7 @@ services:
       - healthchecks:/healthchecks
   worker:
     build:
-      context: ./worker
+      context: worker
     networks:
       back-tier: {}
     depends_on:
