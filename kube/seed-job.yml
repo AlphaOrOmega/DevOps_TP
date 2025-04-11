@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Job
+metadata:
+  name: seed-job
+spec:
+  template:
+    spec:
+      containers:
+        - name: seed
+          image: seed:latest
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
