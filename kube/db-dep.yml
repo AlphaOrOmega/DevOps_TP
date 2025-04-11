@@ -8,14 +8,14 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: db
+      app: db-pod
   template:
     metadata:
       labels:
-        app: db
+        app: db-pod
     spec:
       containers:
-        - name: db
+        - name: db-pod
           image: postgres:15-alpine
           env:
             - name:  'POSTGRES_USER'
