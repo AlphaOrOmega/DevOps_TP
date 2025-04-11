@@ -3,11 +3,11 @@ kind: Service
 metadata:
   name: vote-service
   labels:
-    app: vote
+    app: vote-service
 spec:
   selector:
     app: vote
   ports:
     - port: 8080
       targetPort: 8080
-  type: ClusterIP
+  type: LoadBalancer

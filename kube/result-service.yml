@@ -3,11 +3,11 @@ kind: Service
 metadata:
   name: result-service
   labels:
-    app: result
+    app: result-service
 spec:
   selector:
     app: result
   ports:
     - port: 4000
       targetPort: 4000
-  type: ClusterIP
+  type: LoadBalancer 

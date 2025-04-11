@@ -1,9 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: worker-deployment
+  name: db-deployment
   labels:
-    app: db
+    app: db-deployment
 spec:
   replicas: 1
   selector:
@@ -25,7 +25,14 @@ spec:
           volumeMounts:
             - name: data-volume
               mountPath: /var/lib/postgresql/data
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
       volumes:
         - name: data-volume
           persistentVolumeClaim:
-            claimName: db-data-PVC
+            claimName: db-data-pvc

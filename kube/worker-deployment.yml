@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: worker-deployment
   labels:
-    app: worker
+    app: worker-deployment
 spec:
   replicas: 1
   selector:
@@ -15,6 +15,14 @@ spec:
         app: worker
     spec:
       containers:
-        - name: worker
-          image: worker:latest
-
+      - image: worker:latest
+        imagePullPolicy: Never
+        name: worker
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+        

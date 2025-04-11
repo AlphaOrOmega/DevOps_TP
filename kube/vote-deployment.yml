@@ -17,6 +17,7 @@ spec:
       containers:
         - name: vote
           image: vote:latest
+          imagePullPolicy: Never
           resources:
             limits:
               memory: "512Mi"

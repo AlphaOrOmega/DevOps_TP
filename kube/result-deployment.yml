@@ -16,6 +16,7 @@ spec:
     spec:
       containers:
         - image: result:latest
+          imagePullPolicy: Never
           name: result
           env:
             - name: PORT
