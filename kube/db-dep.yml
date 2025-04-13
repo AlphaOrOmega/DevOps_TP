@@ -22,9 +22,6 @@ spec:
               value: 'postgres'
             - name:  'POSTGRES_PASSWORD'
               value: 'postgres'
-          volumeMounts:
-            - name: data-volume
-              mountPath: /var/lib/postgresql/data
           resources:
             limits:
               memory: "512Mi"
@@ -32,7 +29,22 @@ spec:
             requests:
               memory: "256Mi"
               cpu: "250m"
+          volumeMounts:
+            - name: data-volume
+              mountPath: /var/lib/postgresql/data
+            - name: healthcheck-scripts
+              mountPath: /healthchecks
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - /healthchecks/postgres.sh
+            initialDelaySeconds: 10
+            periodSeconds: 10
       volumes:
         - name: data-volume
           persistentVolumeClaim:
             claimName: db-data-pvc
+        - name: healthcheck-scripts
+          persistentVolumeClaim:
+            claimName: healthcheck-pvc

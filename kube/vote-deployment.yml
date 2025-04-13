@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: vote-deployment
   labels:
-    app: vote
+    app: vote-deployment
 spec:
   replicas: 3
   selector:
@@ -25,4 +25,10 @@ spec:
             requests:
               memory: "256Mi"
               cpu: "250m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 10
           

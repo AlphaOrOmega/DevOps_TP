@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: init-healthchecks
+spec:
+  template:
+    spec:
+      containers:
+        - name: init-healthchecks
+          image: alpine
+          command: ['sh', '-c', 'echo "#!/bin/sh\nredis-cli ping | grep -q PONG" > /healthchecks/redis.sh && chmod +x /healthchecks/redis.sh']
+          volumeMounts:
+            - name: healthcheck-scripts
+              mountPath: /healthchecks
+      restartPolicy: OnFailure
+      volumes:
+        - name: healthcheck-scripts
+          persistentVolumeClaim:
+            claimName: healthcheck-pvc

@@ -24,4 +24,18 @@ spec:
             requests:
               memory: "256Mi"
               cpu: "250m"
+          volumeMounts:
+            - name: healthcheck-scripts
+              mountPath: /healthchecks
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - /healthchecks/redis.sh
+            initialDelaySeconds: 10
+            periodSeconds: 10
+      volumes:
+        - name: healthcheck-scripts
+          persistentVolumeClaim:
+            claimName: healthcheck-pvc
 
