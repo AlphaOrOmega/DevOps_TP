@@ -29,11 +29,9 @@ spec:
       containers:
         - name: db-pod
           image: postgres:15-alpine
-          env:
-            - name:  'POSTGRES_USER'
-              value: 'postgres'
-            - name:  'POSTGRES_PASSWORD'
-              value: 'postgres'
+          envFrom:
+            - configMapRef:
+                name: db-config
           resources:
             limits:
               memory: "512Mi"

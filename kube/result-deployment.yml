@@ -18,9 +18,9 @@ spec:
         - image: result:latest
           imagePullPolicy: Never
           name: result
-          env:
-            - name: PORT
-              value: "4000"
+          envFrom:
+            - configMapRef:
+                name: result-configmap
           resources:
             limits:
               memory: "512Mi"
