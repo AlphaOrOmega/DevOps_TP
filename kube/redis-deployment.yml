@@ -14,6 +14,18 @@ spec:
       labels:
         app: redis-pod
     spec:
+      initContainers:
+        - name: download-healthchecks
+          image: alpine:3.14
+          command:
+            - sh
+            - -c
+            - |
+              apk add --no-cache git && \
+              git clone https://gitlab.imt-atlantique.fr/login-nuage/healthchecks/ /
+          volumeMounts:
+            - name: repo-volume
+              mountPath: /healthchecks/
       containers:
         - name: redis-pod
           image: redis:alpine
@@ -24,9 +36,6 @@ spec:
             requests:
               memory: "256Mi"
               cpu: "250m"
-          volumeMounts:
-            - name: healthcheck-scripts
-              mountPath: /healthchecks
           livenessProbe:
             exec:
               command:
@@ -35,7 +44,6 @@ spec:
             initialDelaySeconds: 10
             periodSeconds: 10
       volumes:
-        - name: healthcheck-scripts
-          persistentVolumeClaim:
-            claimName: healthcheck-pvc
+        - name: repo-volume
+          emptyDir: { }
 
