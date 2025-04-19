@@ -3,8 +3,13 @@ kind: Job
 metadata:
   name: seed-job
 spec:
+  backoffLimit: 4
   template:
     spec:
+      initContainers:
+        - name: wait-for-nginx
+          image: busybox
+          command: [ 'sh', '-c', 'until nc -z nginx 8080; do echo waiting...; sleep 2; done' ]
       containers:
         - name: seed
           image: seed-data:latest
