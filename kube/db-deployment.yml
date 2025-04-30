@@ -42,6 +42,7 @@ spec:
           volumeMounts:
             - name: data-volume
               mountPath: /var/lib/postgresql/data
+              subPath: data
             - name: repo-volume
               mountPath: /healthchecks/
           livenessProbe:

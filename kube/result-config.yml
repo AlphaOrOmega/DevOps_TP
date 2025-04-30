@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: result-configmap
-  namespace: default
-data:
-  PORT: "4000"
