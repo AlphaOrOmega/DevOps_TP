@@ -1,0 +1,4 @@
+- name: Postgre mdr
+  hosts: all
+  roles:
+    - role: pg_install
