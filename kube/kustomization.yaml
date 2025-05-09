@@ -7,10 +7,8 @@ generatorOptions:
   disableNameSuffixHash: true
 
 resources:
-  - db-data-PV.yml
-  - db-data-PVC.yml
-  - db-deployment.yml
   - db-service.yml
+  - endpoint_slice.yml
   - redis-deployment.yml
   - redis-service.yml
   - result-deployment.yml
