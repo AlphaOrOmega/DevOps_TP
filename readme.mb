@@ -1,0 +1,13 @@
+# docker
+
+# kubernetes
+minikube image build ./nginx -t nginx:latest && minikube image build ./result -t result:latest && minikube image build ./seed-data -t seed-data:latest && minikube image build ./vote -t vote:latest && minikube image build ./worker -t worker:latest
+minikube tunnel
+kubectl get svc/pod/...
+kubectl logs <pod-name>
+kubectl delete all --all
+
+
+# ansible
+ansible-playbook .\playbook-db.yaml
+docker run postgres pg_isready --host=10.129.178.171

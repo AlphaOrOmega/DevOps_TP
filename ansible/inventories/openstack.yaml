@@ -4,5 +4,5 @@ all:
       ansible_host: 10.129.178.171
       ansible_user: root
       ansible_port: 22
-      ansible_password: password
+      ansible_password: me
 
