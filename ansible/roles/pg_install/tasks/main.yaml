@@ -54,7 +54,7 @@
     address: all
     method: md5
     state: present
-    notify: Restart PostgreSQL
+  notify: Restart PostgreSQL
 
 - name: Set listen_addresses to 0.0.0.0
   community.postgresql.postgresql_set:

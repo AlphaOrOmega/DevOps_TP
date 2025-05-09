@@ -1,5 +1,5 @@
 - name: PostgreSQL Install
-  hosts: all
+  hosts: vm1
   vars:
     pg_user: "postgres"
     pg_password: "postgres"
