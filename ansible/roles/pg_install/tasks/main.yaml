@@ -11,46 +11,50 @@
     name: postgresql
     state: started
 
-- name: Create a new database with name "postgres"
+- name: Create a new database
   community.postgresql.postgresql_db:
     name: postgres
     comment: The postgre DB
   become: true
   become_user: postgres
 
-- name: Create user postgre with password
+- name: Create PostgreSQL user
   community.postgresql.postgresql_user:
     login_db: postgres
-    name: postgres
-    password: postgres
+    name: "{{ pg_user }}"
+    password: "{{ pg_password }}"
   become: true
   become_user: postgres
+  notify: Restart PostgreSQL
 
-- name: Grant privs to postgre
+- name: Grant privileges to user
   community.postgresql.postgresql_privs:
-    login_db: postgres
+    login_db: "{{ pg_user }}"
     state: present
     privs: all
     type: database
     roles: CURRENT_USER
   become: true
   become_user: postgres
+  notify: Restart PostgreSQL
 
 - name: Get pg_hba.conf path
-  command: psql -t -P format=unaligned -c "SHOW hba_file;"
+  ansible.builtin.command: psql -t -P format=unaligned -c "SHOW hba_file;"
   register: pg_hba_path
   become: true
   become_user: postgres
+  notify: Restart PostgreSQL
 
-- name: Allow postgres user to connect via md5
+- name: Allow user to connect via md5
   community.postgresql.postgresql_pg_hba:
     dest: "{{ pg_hba_path.stdout | trim }}"
     contype: host
-    users: postgres
+    users: "{{ pg_user }}"
     databases: all
     address: all
     method: md5
     state: present
+    notify: Restart PostgreSQL
 
 - name: Set listen_addresses to 0.0.0.0
   community.postgresql.postgresql_set:
@@ -58,8 +62,6 @@
     value: "0.0.0.0"
   become: true
   become_user: postgres
+  notify: Restart PostgreSQL
 
-- name: Restart service postgresql
-  ansible.builtin.systemd:
-    name: postgresql.service
-    state: restarted
+
