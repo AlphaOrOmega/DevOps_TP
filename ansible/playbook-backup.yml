@@ -1,36 +1,33 @@
-- name: Backup PostgreSQL database and restore it to another host
-  hosts: vm1
+- name: Stream PostgreSQL DB backup to localhost
+  hosts: localhost
   gather_facts: no
   vars:
-    pg_user: "postgres"
+    db_user: postgres
+    db_name: postgres
     pg_password: "postgres"
-    db_name: "postgres"
-    dump_file: "/tmp/db_dump.sql"
-    local_backup_path: "./db_dump.sql"
+    remote_user: root
+    remote_pwd: mdp
+    backup_filename: "backup.sql"
+    inventory_hostname: "{{ hostvars['vm1']['ansible_host'] }}"
   tasks:
-
-    - name: Dump database and stream it to localhost
-      ansible.builtin.shell: |
-        PGPASSWORD={{ pg_password }} pg_dump -U {{ pg_user }} {{ db_name }}
-      args:
-        executable: /bin/bash
-      register: pg_dump_output
-      changed_when: false
-      become: true
-      become_user: postgres
-
-    - name: Save streamed dump to local file
-      local_action: copy content="{{ pg_dump_output.stdout }}" dest="{{ local_backup_path }}"
+    - name: Stream DB backup from remote server to localhost
+      shell: >
+        sshpass -p {{remote_pwd}}
+        ssh -o StrictHostKeyChecking=no {{ remote_user }}@{{ inventory_hostname }}
+        "sudo -u {{ db_user }} PGPASSWORD={{ pg_password }} pg_dump -U {{ db_user }} {{ db_name }}" > {{ backup_filename }}
       delegate_to: localhost
+      environment:
+        PGPASSWORD: postgres
 
 - name: Restore dump to destination host
   hosts: vm2
   gather_facts: no
   vars:
-    local_backup_path: "./db_dump.sql"
-    remote_dump_path: "/tmp/db_dump.sql"
+    local_backup_path: "./backup.sql"
+    remote_dump_path: "/tmp/backup_{{ ('pipe', 'date +%Y%m%d%H%M%S') }}.sql"
   tasks:
     - name: Copy dump file from localhost to destination host
       ansible.builtin.copy:
         src: "{{ local_backup_path }}"
         dest: "{{ remote_dump_path }}"
+        force: true

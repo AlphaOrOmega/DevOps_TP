@@ -6,6 +6,25 @@
     state: present
     update_cache: yes
 
+- name: Set vm.vfs_cache_pressure runtime value
+  sysctl:
+    name: vm.vfs_cache_pressure
+    value: 90
+    state: present
+
+- name: Calculate shared_buffers (25% if > 1GB, 15% otherwise)
+  set_fact:
+    shared_buffers_mb: >-
+      {% set mem = ansible_facts['memtotal_mb'] %}
+      {{ (mem * 0.25)|int if mem >= 1024 else (mem * 0.15)|int }}
+
+- name: Set shared_buffers in postgresql.conf
+  lineinfile:
+    path: /etc/postgresql/16/main/postgresql.conf
+    regexp: '^#?shared_buffers ='
+    line: "shared_buffers = {{ shared_buffers_mb }}MB"
+  notify: Restart PostgreSQL
+
 - name: Start service postgres
   service:
     name: postgresql
