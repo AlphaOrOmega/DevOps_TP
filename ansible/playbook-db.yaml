@@ -1,8 +1,0 @@
-- name: PostgreSQL Install
-  hosts: all
-  vars:
-    pg_user: "postgres"
-    pg_password: "postgres"
-  become: yes
-  roles:
-    - role: pg_install

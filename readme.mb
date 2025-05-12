@@ -11,3 +11,5 @@ kubectl delete all --all
 # ansible
 ansible-playbook .\playbook-db.yaml
 docker run postgres pg_isready --host=10.129.178.171
+ansible -m setup vm1
+
