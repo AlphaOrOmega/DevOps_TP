@@ -1,0 +1,86 @@
+- name: Install postgresql-15 and python3-psycopg2
+  ansible.builtin.apt:
+    name:
+      - postgresql
+      - python3-psycopg2
+    state: present
+    update_cache: yes
+
+- name: Set vm.vfs_cache_pressure runtime value
+  sysctl:
+    name: vm.vfs_cache_pressure
+    value: 90
+    state: present
+
+- name: Calculate shared_buffers (25% if > 1GB, 15% otherwise)
+  set_fact:
+    shared_buffers_mb: >-
+      {% set mem = ansible_facts['memtotal_mb'] %}
+      {{ (mem * 0.25)|int if mem >= 1024 else (mem * 0.15)|int }}
+
+- name: Set shared_buffers in postgresql.conf
+  lineinfile:
+    path: /etc/postgresql/16/main/postgresql.conf
+    regexp: '^#?shared_buffers ='
+    line: "shared_buffers = {{ shared_buffers_mb }}MB"
+  notify: Restart PostgreSQL
+
+- name: Start service postgres
+  service:
+    name: postgresql
+    state: started
+
+- name: Create a new database
+  community.postgresql.postgresql_db:
+    name: postgres
+    comment: The postgre DB
+  become: true
+  become_user: postgres
+
+- name: Create PostgreSQL user
+  community.postgresql.postgresql_user:
+    login_db: postgres
+    name: "{{ pg_user }}"
+    password: "{{ pg_password }}"
+  become: true
+  become_user: postgres
+  notify: Restart PostgreSQL
+
+- name: Grant privileges to user
+  community.postgresql.postgresql_privs:
+    login_db: "{{ pg_user }}"
+    state: present
+    privs: all
+    type: database
+    roles: CURRENT_USER
+  become: true
+  become_user: postgres
+  notify: Restart PostgreSQL
+
+- name: Get pg_hba.conf path
+  ansible.builtin.command: psql -t -P format=unaligned -c "SHOW hba_file;"
+  register: pg_hba_path
+  become: true
+  become_user: postgres
+  notify: Restart PostgreSQL
+
+- name: Allow user to connect via md5
+  community.postgresql.postgresql_pg_hba:
+    dest: "{{ pg_hba_path.stdout | trim }}"
+    contype: host
+    users: "{{ pg_user }}"
+    databases: all
+    address: all
+    method: md5
+    state: present
+  notify: Restart PostgreSQL
+
+- name: Set listen_addresses to 0.0.0.0
+  community.postgresql.postgresql_set:
+    name: listen_addresses
+    value: "0.0.0.0"
+  become: true
+  become_user: postgres
+  notify: Restart PostgreSQL
+
+

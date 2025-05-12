@@ -1,0 +1,24 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: seed-job
+spec:
+  backoffLimit: 4
+  template:
+    spec:
+      initContainers:
+        - name: wait-for-nginx
+          image: busybox
+          command: [ 'sh', '-c', 'until nc -z nginx 8080; do echo waiting...; sleep 2; done' ]
+      containers:
+        - name: seed
+          image: seed-data:latest
+          imagePullPolicy: Never
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+      restartPolicy: 'OnFailure'

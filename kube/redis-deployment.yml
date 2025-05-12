@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-deployment
+  labels:
+    app: redis-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis-pod
+  template:
+    metadata:
+      labels:
+        app: redis-pod
+    spec:
+      initContainers:
+        - name: download-healthchecks
+          image: alpine:3.14
+          command:
+            - sh
+            - -c
+            - |
+              apk add --no-cache git && \
+              git clone https://gitlab.imt-atlantique.fr/login-nuage/healthchecks/ /healthchecks/
+          volumeMounts:
+            - name: repo-volume-redis
+              mountPath: /healthchecks/
+      containers:
+        - name: redis-pod
+          image: redis:alpine
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - /healthchecks/redis.sh
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          volumeMounts:
+            - name: repo-volume-redis
+              mountPath: /healthchecks/
+      volumes:
+        - name: repo-volume-redis
+          emptyDir: { }
+
