@@ -1,0 +1,21 @@
+- name: keygens
+  hosts: vm2
+  tasks:
+    - name: Generate SSH key
+      ansible.builtin.command: ssh-keygen -t rsa -b 4096 -f /tmp/id_rsa -N ""
+      args:
+        creates: /tmp/id_rsa
+
+    - name: Fetch public key to controller
+      ansible.builtin.fetch:
+        src: /tmp/id_rsa.pub
+        dest: /tmp/keys_from_vm1/id_rsa.pub
+        flat: yes
+
+- name: Distribute key to vm1
+  hosts: vm1
+  tasks:
+    - name: Copy public key from controller to vm1
+      ansible.builtin.copy:
+        src: /tmp/keys_from_vm1/id_rsa.pub
+        dest: /root/.ssh/authorized_keys
