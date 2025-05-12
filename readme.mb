@@ -5,6 +5,8 @@ minikube image build ./nginx -t nginx:latest && minikube image build ./result -t
 minikube tunnel
 kubectl get svc/pod/...
 kubectl logs <pod-name>
+Kubectl apply -k ./kube
+Kubectl delete -k ./kube
 kubectl delete all --all
 
 
