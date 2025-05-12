@@ -18,13 +18,6 @@
       {% set mem = ansible_facts['memtotal_mb'] %}
       {{ (mem * 0.25)|int if mem >= 1024 else (mem * 0.15)|int }}
 
-- name: Set shared_buffers in postgresql.conf
-  lineinfile:
-    path: /etc/postgresql/16/main/postgresql.conf
-    regexp: '^#?shared_buffers ='
-    line: "shared_buffers = {{ shared_buffers_mb }}MB"
-  notify: Restart PostgreSQL
-
 - name: Start service postgres
   service:
     name: postgresql
@@ -34,6 +27,15 @@
   community.postgresql.postgresql_db:
     name: postgres
     comment: The postgre DB
+  become: true
+  become_user: postgres
+
+- name: Set shared_buffers parameter
+  community.postgresql.postgresql_set:
+    name: shared_buffers
+    value: "{{ shared_buffers_mb }}MB"
+  register: set
+  notify: Restart PostgreSQL
   become: true
   become_user: postgres
 

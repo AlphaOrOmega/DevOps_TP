@@ -11,6 +11,8 @@ kubectl delete all --all
 
 
 # ansible
+ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i inventories/openstack.yaml ./playbook-db.yml
+
 ansible-playbook .\playbook-db.yaml
 docker run postgres pg_isready --host=10.129.178.171
 ansible -m setup vm1
