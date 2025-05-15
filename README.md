@@ -9,8 +9,10 @@ ansible-playbook -i ansible/inventories/openstack.yaml ./ansible/playbook-db.yml
 Then, start the kubernetes part of the project by running the 2 following commands at root of the project, in 2 different cli:
 ```
 minikube start && minikube tunnel
-minikube image build ./docker/nginx -t nginx:latest && minikube image build ./docker/result -t result:latest && minikube image build ./docker//seed-data -t seed-data:latest && minikube image build ./docker/vote -t vote:latest && minikube image build ./docker/worker -t worker:latest && Kubectl create -k ./kube
+minikube image build ./docker/nginx -t nginx:latest && minikube image build ./docker/result -t result:latest && minikube image build ./docker//seed-data -t seed-data:latest && minikube image build ./docker/vote -t vote:latest && minikube image build ./docker/worker -t worker:latest && Kubectl apply -k ./kube
 ```
+NB: seed-job is "line break sensitive", as we are editing the file on windows but running it on linux container, the pod might not recognize the file at run time, make sure to not change it :)
+
 Finally, to perform saves of the db on a cold replica, run the 2 following commands from the root of the project :
 ```
 ansible-playbook -i ansible/inventories/openstack.yaml ./ansible/playbook-keys.yml
@@ -18,12 +20,14 @@ ansible-playbook -i ansible/inventories/openstack.yaml ./ansible/playbook-backup
 ```
 
 That's it !
-don't forget to
-- vote at localhost:8080
-- and watch results localhost:4000
 
-PS : the database is not designed to delete entries, hence every inserted votes prior remains.
+# Accessing endpoints
 
+don't forget to :
+- vote [here](https://localhost:8080) 
+- and watch results [here](https://localhost:4000)
+
+PS : The database is designed to save entries, hence every inserted votes are kept in memory.
 
 
 # Bonus commands
