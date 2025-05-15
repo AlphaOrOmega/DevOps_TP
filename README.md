@@ -9,7 +9,7 @@ ansible-playbook -i ansible/inventories/openstack.yaml ./ansible/playbook-db.yml
 Then, start the kubernetes part of the project by running the 2 following commands at root of the project, in 2 different cli:
 ```
 minikube start && minikube tunnel
-minikube image build ./nginx -t nginx:latest && minikube image build ./result -t result:latest && minikube image build ./seed-data -t seed-data:latest && minikube image build ./vote -t vote:latest && minikube image build ./worker -t worker:latest && Kubectl apply -k ./kube
+minikube image build ./nginx -t nginx:latest && minikube image build ./result -t result:latest && minikube image build ./seed-data -t seed-data:latest && minikube image build ./vote -t vote:latest && minikube image build ./worker -t worker:latest && Kubectl create -k ./kube
 ```
 Finally, to perform saves of the db on a cold replica, run the 2 following commands from the root of the project :
 ```
