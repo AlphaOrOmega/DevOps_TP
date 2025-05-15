@@ -15,7 +15,7 @@ Finally, to perform saves of the db on a cold replica, run the 2 following comma
 ```
 ansible-playbook -i ansible/inventories/openstack.yaml ./ansible/playbook-keys.yml
 ansible-playbook -i ansible/inventories/openstack.yaml ./ansible/playbook-backup.yml
-````
+```
 
 That's it !
 don't forget to
@@ -29,6 +29,7 @@ PS : the database is not designed to delete entries, hence every inserted votes 
 # Bonus commands
 
 ## kubernetes
+```
 minikube start
 minikube image build ./nginx -t nginx:latest && minikube image build ./result -t result:latest && minikube image build ./seed-data -t seed-data:latest && minikube image build ./vote -t vote:latest && minikube image build ./worker -t worker:latest
 minikube tunnel
@@ -38,9 +39,11 @@ Kubectl apply -k ./kube
 Kubectl delete -k ./kube
 kubectl delete all --all
 minikube delete --all
-
+```
 ## ansible
+```
 ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i inventories/openstack.yaml ./playbook-db.yml
 ansible-playbook .\playbook-db.yaml
 docker run postgres pg_isready --host=10.129.178.171
 ansible -m setup vm1
+```
