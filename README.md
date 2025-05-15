@@ -6,7 +6,7 @@ To start the database using ansible, run the following command from the root of 
 ```
 ansible-playbook -i ansible/inventories/openstack.yaml ./ansible/playbook-db.yml
 ```
-Then, start the kubernetes part of the project, run the 2 following commands at root of the project, in 2 different cli:
+Then, start the kubernetes part of the project by running the 2 following commands at root of the project, in 2 different cli:
 ```
 minikube start && minikube tunnel
 minikube image build ./nginx -t nginx:latest && minikube image build ./result -t result:latest && minikube image build ./seed-data -t seed-data:latest && minikube image build ./vote -t vote:latest && minikube image build ./worker -t worker:latest && Kubectl apply -k ./kube
@@ -37,6 +37,7 @@ kubectl logs <pod-name>
 Kubectl apply -k ./kube
 Kubectl delete -k ./kube
 kubectl delete all --all
+minikube delete --all
 
 ## ansible
 ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i inventories/openstack.yaml ./playbook-db.yml
