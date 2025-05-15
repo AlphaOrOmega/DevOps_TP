@@ -1,5 +1,5 @@
 # Preliminary
-We suppose you have docker, kubernetes and ansible installed and configured on your environment, and also that you are using windows or linux.
+We suppose you have docker and kubernetes installed and configured on your environment, and also that you are using windows or linux.
 
 # Starting the whole project
 Firstly, start the kubernetes cluster by running the 2 following commands at the root of the project, in 2 different cli:
