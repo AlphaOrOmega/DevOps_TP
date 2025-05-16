@@ -24,8 +24,8 @@ That's it !
 # Accessing endpoints
 
 don't forget to :
-- vote [here](https://localhost:8080) 
-- and watch results [here](https://localhost:4000)
+- vote [here](http://localhost:8080) 
+- and watch results [here](http://localhost:4000)
 
 PS : The database is designed to save entries, hence every inserted votes are kept in memory.
 
