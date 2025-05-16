@@ -34,7 +34,7 @@
   community.postgresql.postgresql_set:
     name: shared_buffers
     value: "{{ shared_buffers_mb }}MB"
-  register: set
+  #register: set
   notify: Restart PostgreSQL
   become: true
   become_user: postgres

@@ -8,7 +8,7 @@ COPY . /source
 RUN dotnet restore -a $TARGETARCH
 RUN dotnet publish -c release -o /app -a $TARGETARCH --self-contained false --no-restore
 
-
+# Multi-stage Dockerfile
 FROM mcr.microsoft.com/dotnet/runtime:8.0
 WORKDIR /app
 COPY --from=source-env /app .
